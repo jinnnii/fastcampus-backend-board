@@ -24,9 +24,8 @@ import java.util.Set;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdId")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Article {
+public class Article extends AuditingField{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        //
@@ -38,10 +37,6 @@ public class Article {
     @OneToMany(mappedBy = "article" , cascade = CascadeType.ALL)
     @ToString.Exclude
     private final Set<Comment> comments = new LinkedHashSet<>();
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;        //생성일
-    @CreatedBy @Column(nullable = false) private String createdId;               //생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;       //수정일
-    @LastModifiedBy @Column(nullable = false) private String modifiedId;              //수정자
 
     protected Article(){}
 

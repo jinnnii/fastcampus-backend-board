@@ -20,19 +20,13 @@ import java.util.Objects;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdId")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Comment {
+public class Comment extends AuditingField{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter @ManyToOne(optional = false) private Article article;            //게시글
     @Setter @Column(nullable = false, length = 500) private String content;             //본문
-
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;        //생성일
-    @CreatedBy @Column(nullable = false) private String createdId;               //생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;       //수정일
-    @LastModifiedBy @Column(nullable = false) private String modifiedId;              //수정자       // 수정자
 
     protected Comment() {}
 
