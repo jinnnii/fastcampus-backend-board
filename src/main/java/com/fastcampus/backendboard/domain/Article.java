@@ -1,6 +1,6 @@
 package com.fastcampus.backendboard.domain;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
