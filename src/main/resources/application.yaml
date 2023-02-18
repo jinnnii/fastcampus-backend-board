@@ -26,13 +26,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
   sql.init.mode : always
-
-#---
-#
-#spring:
-#  config.activate.on-profile : testdb
-#  datasource:
-#    url : jdbc:h2:mem:board;mode=mysql
-#    driver-class-name: org.h2.Driver
-#  sql.init.mode : always
-#  test.database.replace : none
+  data.rest:
+    base-path: /api
+    detection-strategy: annotated
