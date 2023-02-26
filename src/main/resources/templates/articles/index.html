@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Article List Page</title>
 </head>
 <body>
     <!--Semantic Tag-->
-    <header th:replace="~{header.html::#header}"></header>
+    <header id="header"></header>
     <main>
         <form>
             <label for="search-type" hidden>유형</label>
@@ -69,6 +69,6 @@
         </nav>
     </main>
 
-    <footer th:replace="footer::footer"></footer>
+    <footer id="footer"></footer>
 </body>
 </html>
