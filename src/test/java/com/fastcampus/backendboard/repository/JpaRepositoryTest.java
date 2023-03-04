@@ -2,6 +2,8 @@ package com.fastcampus.backendboard.repository;
 
 import com.fastcampus.backendboard.config.JpaConfig;
 import com.fastcampus.backendboard.domain.Article;
+import com.fastcampus.backendboard.domain.UserAccount;
+import org.apache.catalina.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,15 @@ import static org.assertj.core.api.Assertions.*;
 class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+    private final UserAccountRepository userAccountRepository;
 
 
-    JpaRepositoryTest(@Autowired ArticleRepository articleRepository, @Autowired CommentRepository commentRepository) {
+    JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
+                      @Autowired CommentRepository commentRepository,
+                      @Autowired UserAccountRepository userAccountRepository) {
         this.articleRepository = articleRepository;
         this.commentRepository = commentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
     @DisplayName("select test")
     @Test
@@ -46,8 +52,9 @@ class JpaRepositoryTest {
     void givenTestData_whenInserting_thenWorksFine() {
         //Given
         long preCount = articleRepository.count();
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("kej", "pw","kej@email.com","nickname",null));
         //When
-        articleRepository.save(Article.of("new title", "new content", "#spring"));
+        articleRepository.save(Article.of(userAccount,"new title", "new content", "#spring"));
         //Then
         assertThat(articleRepository.count())
                 .isEqualTo(preCount+1);
