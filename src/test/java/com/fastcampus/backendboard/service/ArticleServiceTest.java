@@ -1,23 +1,25 @@
 package com.fastcampus.backendboard.service;
 
 import com.fastcampus.backendboard.domain.Article;
+import com.fastcampus.backendboard.domain.UserAccount;
 import com.fastcampus.backendboard.domain.type.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
-import com.fastcampus.backendboard.dto.ArticleUpdateDto;
+import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
+import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
-import static com.fastcampus.backendboard.domain.QArticle.article;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -35,69 +37,156 @@ class ArticleServiceTest {
     @InjectMocks private ArticleService sut;
     @Mock private ArticleRepository articleRepository;
 
+    @DisplayName("When no Searching articles, Return Articles with Paging")
+    @Test
+    void givenNoSearchingParams_whenSearchingArticles_thenReturnsArticles(){
+        //Given
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepository.findAll(pageable)).willReturn(Page.empty());
+
+        //When
+        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable);
+
+        //Then
+        assertThat(articles).isEmpty();
+        then(articleRepository).should().findAll(pageable);
+    }
     @DisplayName("When Searching articles, Return Articles With Paging")
     @Test
     void givenSearchParams_whenSearchingArticles_thenReturnsArticles() {
         //Given
+        SearchType searchType = SearchType.TITLE;
+        String keyword = "title";
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepository.findByTitle(keyword, pageable)).willReturn(Page.empty());
 
         //When
-        Page<ArticleDto> articles = sut.searchArticles(SearchType.TITLE, "search keyword"); //제목, 본문, 아이디, 닉네임, 해시태그
+        Page<ArticleDto> articles = sut.searchArticles(searchType, keyword, pageable); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
-        assertThat(articles).isNotNull();
+        assertThat(articles).isEmpty();
+        then(articleRepository).should().findByTitle(keyword,pageable);
+
     }
 
     @DisplayName("When Selecting article, Return Article")
     @Test
     void givenArticleId_whenSearchingArticle_thenReturnsArticle() {
         //Given
-
+        Long articleId = 1L;
+        Article article = createArticle();
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
         //When
-        ArticleDto article = sut.searchArticle(1L); //제목, 본문, 아이디, 닉네임, 해시태그
+        ArticleWithCommentsDto dto = sut.getArticle(articleId);
 
         //Then
-        assertThat(article).isNotNull();
+        assertThat(dto)
+                .hasFieldOrPropertyWithValue("title",article.getTitle())
+                .hasFieldOrPropertyWithValue("content", article.getContent())
+                .hasFieldOrPropertyWithValue("hashtag", article.getHashtag());
+        then(articleRepository).should().findById(articleId);
+    }
+
+    @DisplayName("When Selecting no exist article, Return Exception")
+    @Test
+    void givenNoneExistentArticleId_whenSearchingArticle_thenReturnsException() {
+        //Given
+        Long articleId = 0L;
+        Article article = createArticle();
+        given(articleRepository.findById(articleId)).willReturn(Optional.empty());
+
+        //When
+        Throwable t = catchThrowable(()->sut.getArticle(articleId));
+
+        //Then
+        assertThat(t)
+                .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage("No Article - articleId :"+ articleId);
+        then(articleRepository).should().findById(articleId);
     }
 
     @DisplayName("When Inserting article, Save Article")
+        @Test
+        void givenArticleInfo_whenSavingArticle_thenSavesArticle() {
+            //Given
+            ArticleDto dto = createArticleDto();
+            given(articleRepository.save(any(Article.class))).willReturn(createArticle());
+
+            //When
+            sut.saveArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
+
+            //Then
+            then(articleRepository).should().save(any(Article.class));
+    }
+
+    @DisplayName("When Inserting no exist Modified article, Write warning logs")
     @Test
-    void givenArticleInfo_whenSavingArticle_thenSavesArticle() {
+    void givenNoneExistArticleInfo_whenUpdatingArticle_thenLogsWarningAndDoesNothing() {
         //Given
-        ArticleDto dto = ArticleDto.of(LocalDateTime.now(), "Kej", "title", "content", "java");
-        given(articleRepository.save(any(Article.class))).willReturn(null);
+        ArticleDto dto = createArticleDto("new title", "new content", "spring");
+        given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
 
         //When
-        sut.saveArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
+        sut.updateArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
-        then(articleRepository).should().save(any(Article.class));
+        then(articleRepository).should().getReferenceById(dto.id());
     }
 
     @DisplayName("When Inserting Modified article, Update Article")
     @Test
     void givenArticleIdAndModifiedInfo_whenUpdatingArticle_thenUpdatesArticle() {
         //Given
-        ArticleUpdateDto dto = ArticleUpdateDto.of("title", "Kej", "java");
-        given(articleRepository.save(any(Article.class))).willReturn(null);
+        Article article = createArticle();
+        ArticleDto dto = createArticleDto("new title", "new content", "spring");
+        given(articleRepository.getReferenceById(dto.id())).willReturn(article);
 
         //When
-        sut.updateArticle(1L, dto); //제목, 본문, 아이디, 닉네임, 해시태그
+        sut.updateArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
-        then(articleRepository).should().save(any(Article.class));
+        assertThat(article)
+                .hasFieldOrPropertyWithValue("title", dto.title())
+                .hasFieldOrPropertyWithValue("content", dto.content())
+                .hasFieldOrPropertyWithValue("hashtag", dto.hashtag());
+        then(articleRepository).should().getReferenceById(dto.id());
     }
 
     @DisplayName("When Inserting articleId, Delete Article")
     @Test
     void givenArticleId_whenDeletingArticle_thenDeletesArticle() {
         //Given
-        ArticleUpdateDto dto = ArticleUpdateDto.of("title", "Kej", "java");
-        willDoNothing().given(articleRepository).delete(any(Article.class));
+        Long articleId = 1L;
+        willDoNothing().given(articleRepository).deleteById(articleId);
 
         //When
         sut.deleteArticle(1L);
 
         //Then
-        then(articleRepository).should().delete(any(Article.class));
+        then(articleRepository).should().deleteById(articleId);
+    }
+
+    private UserAccount createUserAccount(){
+        return UserAccount.of("kej","1234","kej@email.com","K","this is memo");
+    }
+
+    private Article createArticle(){
+        return Article.of(createUserAccount(),"title","content","java");
+    }
+
+    private ArticleDto createArticleDto(){
+        return createArticleDto("title", "content", "java");
+    }
+
+    private ArticleDto createArticleDto(String title, String content, String hashtag){
+        return ArticleDto.of(
+                1L,createUserAccountDto(),title,content,hashtag,LocalDateTime.now(), "kej",LocalDateTime.now(), "kej"
+        );
+    }
+
+    private UserAccountDto createUserAccountDto() {
+        return UserAccountDto.of(
+                1L,"kej","1234","kej@email.com","K","this is memo",LocalDateTime.now(), "kej",LocalDateTime.now(),"kej"
+        );
     }
 }
