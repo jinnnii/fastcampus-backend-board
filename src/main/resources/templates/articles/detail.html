@@ -11,7 +11,7 @@
 </head>
 
 <body>
-  <header id="header"></header>
+  <header id="header">머릿글</header>
 
   <main id="article-main" class="container">
     <header id="article-header" class="py-5 text-center">
@@ -64,13 +64,14 @@
               <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
               <div class="media-body">
                 <div class="user-info-div">
-                  <a href="#" class="btn-link">Lisa D.</a>
-                  <p class="text-muted text-sm">
-                    <i class="fa fa-mobile fa-lg"></i> - From Mobile - 11 min ago
+                  <strong id="co-nickname">Lisa D.</strong>
+                  <p id="co-created-at" class="text-muted text-sm">
+                    <i class="fa fa-mobile fa-lg"></i> From Mobile -
+                    <time> 11 min ago</time>
                     <button type="submit" class="btn btn-sm text-sm btn-danger">삭제</button>
                   </p>
                 </div>
-                <p>consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+                <p id="co-content">consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
                 <div class="ctl-btn-div">
                   <details class="mb-3 co-comment-textbox">
                     <summary class="btn btn-sm">답글 달기</summary>
@@ -151,7 +152,7 @@
       </nav>
     </div>
   </main>
-  <footer id="footer"></footer>
+  <footer id="footer">바닥글</footer>
 
 <!-- Latest compiled JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
