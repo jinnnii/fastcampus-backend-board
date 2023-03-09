@@ -18,7 +18,7 @@
         <div class="row">
             <div class="card card-margin search-form">
                 <div class="card-body p-0">
-                    <form id="search-form">
+                    <form action="/articles" method="get" id="search-form">
                         <div class="row">
                             <div class="col-12">
                                 <div class="row no-gutters">
@@ -33,8 +33,8 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-8 col-md-6 col-sm-12 p-0">
-                                        <label for="search-value" hidden>검색어</label>
-                                        <input type="text" placeholder="검색어..." class="form-control" id="search-value" name="searchValue">
+                                        <label for="search-keyword" hidden>검색어</label>
+                                        <input type="text" placeholder="검색어..." class="form-control" id="search-keyword" name="searchKeyword">
                                     </div>
                                     <div class="col-lg-1 col-md-3 col-sm-12 p-0">
                                         <button type="submit" class="btn btn-base">
