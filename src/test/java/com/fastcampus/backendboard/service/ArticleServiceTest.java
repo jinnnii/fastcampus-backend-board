@@ -166,6 +166,21 @@ class ArticleServiceTest {
         then(articleRepository).should().deleteById(articleId);
     }
 
+    @DisplayName("When Selecting article Count, Return Article Count")
+    @Test
+    void givenNothing_whenCountingArticles_thenReturnArticlesCount() {
+        //Given
+        Long expected  = 1L;
+        given(articleRepository.count()).willReturn(expected );
+
+        //When
+        long actual = sut.getArticleCount();
+
+        //
+        assertThat(actual).isEqualTo(expected);
+        then(articleRepository).should().count();
+    }
+
     private UserAccount createUserAccount(){
         return UserAccount.of("kej","1234","kej@email.com","K","this is memo");
     }
