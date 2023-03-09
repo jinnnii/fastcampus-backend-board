@@ -106,13 +106,13 @@ class CommentServiceTest {
     void givenNoneExistComment_whenUpdatingComment_thenLogsSituationAndDoesNothing(){
         ///Given
         CommentDto dto = createCommentDto("comment");
-        given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
+        given(commentRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
 
         //When
         sut.updateComment(dto);
 
         //Then
-        then(articleRepository).should().getReferenceById(dto.id());
+        then(commentRepository).should().getReferenceById(dto.id());
     }
 
     @DisplayName("When Deleting comment, Deletes comment.")
@@ -126,7 +126,7 @@ class CommentServiceTest {
         sut.deleteComment(commentId);
 
         //Then
-        then(articleRepository).should().deleteById(commentId);
+        then(commentRepository).should().deleteById(commentId);
     }
 
     private CommentDto createCommentDto(String content){
