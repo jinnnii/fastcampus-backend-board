@@ -1,6 +1,7 @@
 package com.fastcampus.backendboard.controller;
 
 import com.fastcampus.backendboard.domain.type.SearchType;
+import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.response.ArticleResponse;
 import com.fastcampus.backendboard.dto.response.ArticleWithCommentsResponse;
 import com.fastcampus.backendboard.service.ArticleService;
@@ -57,6 +58,22 @@ public class ArticleController {
         map.addAttribute("totalCount", articleService.getArticleCount());
 
         return "articles/detail";
+    }
+
+    @GetMapping("/search-hashtag")
+    public String searchHashtag(@RequestParam(required = false) String searchKeyword,
+                                @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                ModelMap map){
+        Page<ArticleResponse> articles = articleService.searchArticlesViaHashtag(searchKeyword,pageable).map(ArticleResponse::from);
+        List<String> hashtags = articleService.getHashtags();
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
+
+        map.addAttribute("articles", articles);
+        map.addAttribute("hashtags", hashtags);
+        map.addAttribute("paginationBarNumbers", barNumbers);
+        map.addAttribute("searchType", SearchType.HASHTAG);
+
+        return "articles/search-hashtag";
     }
 
 }

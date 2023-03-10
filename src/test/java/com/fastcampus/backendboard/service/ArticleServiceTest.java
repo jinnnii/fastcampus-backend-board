@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -67,6 +68,36 @@ class ArticleServiceTest {
         assertThat(articles).isEmpty();
         then(articleRepository).should().findByTitleContaining(keyword,pageable);
 
+    }
+
+    @DisplayName("When Searching article hashtag (no search) , Return Empty page")
+    @Test
+    void givenNoSearchPrams_whenSearchingArticlesViaHashtag_thenReturnsEmptyPage() {
+        //Given
+        Pageable pageable = Pageable.ofSize(20);
+
+        //When
+        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(null, pageable); //제목, 본문, 아이디, 닉네임, 해시태그
+
+        //Then
+        assertThat(articles).isEmpty();
+        assertThat(articles).isEqualTo(Page.empty(pageable));
+        then(articleRepository).shouldHaveNoInteractions();
+    }
+
+    @DisplayName("When Selecting article hashtag , Return Unique Hashtag list")
+    @Test
+    void givenNothing_whenCalling_thenReturnsHashtags() {
+        //Given
+        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
+        given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);
+
+        //When
+        List<String> actualHashtags= sut.getHashtags();
+
+        //Then
+        assertThat(actualHashtags).isEqualTo(expectedHashtags);
+        then(articleRepository).should().findAllDistinctHashtags();
     }
 
     @DisplayName("When Selecting article, Return Article")
