@@ -3,6 +3,7 @@ package com.fastcampus.backendboard.repository;
 import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.Comment;
 import com.fastcampus.backendboard.domain.QArticle;
+import com.fastcampus.backendboard.repository.querydsl.ArticleRepositoryCustom;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import java.util.List;
 @RepositoryRestResource
 public interface ArticleRepository extends
         JpaRepository<Article,Long>,
+        ArticleRepositoryCustom,
         QuerydslPredicateExecutor<Article>,
         QuerydslBinderCustomizer<QArticle> {
     Page<Article> findByTitleContaining(String title, Pageable pageable);
