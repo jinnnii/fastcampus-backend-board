@@ -1,5 +1,6 @@
 
 -- user_account(20)
+insert into user_account (user_id, user_pw, email, nickname, memo, created_at, created_id, modified_at, modified_id) values ('kej', '1234', 'kej@email.com', 'K', null, '2022-04-23 11:02:57', 'user1', '2022-07-03 23:48:52', 'user1');
 insert into user_account (user_id, user_pw, email, nickname, memo, created_at, created_id, modified_at, modified_id) values ('user1', '0VR6ecFvNX41', 'ksowersby0@dion.ne.jp', 'Kerk Sowersby', null, '2022-04-23 11:02:57', 'user1', '2022-07-03 23:48:52', 'user1');
 insert into user_account (user_id, user_pw, email, nickname, memo, created_at, created_id, modified_at, modified_id) values ('user2', '0wG4S4Uf', 'jgaitung1@cam.ac.uk', 'Joletta Gaitung', null, '2022-07-05 16:50:51', 'user3', '2022-11-10 01:33:44', 'user7');
 insert into user_account (user_id, user_pw, email, nickname, memo, created_at, created_id, modified_at, modified_id) values ('user3', 'pwcRgfh', 'wmerdew2@washingtonpost.com', 'Wyn Merdew', null, '2022-04-27 06:23:33', 'user15', '2022-09-14 00:33:52', 'user14');

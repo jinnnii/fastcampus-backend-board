@@ -2,7 +2,7 @@ package com.fastcampus.backendboard.service;
 
 import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.UserAccount;
-import com.fastcampus.backendboard.domain.type.SearchType;
+import com.fastcampus.backendboard.domain.constant.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
@@ -100,6 +100,39 @@ class ArticleServiceTest {
         then(articleRepository).should().findAllDistinctHashtags();
     }
 
+    @DisplayName("When Selecting articleId, Return ArticleWithComments")
+    @Test
+    void givenArticleId_whenSearchingArticleWithComments_thenReturnsArticleWithComments() {
+        //Given
+        Long articleId = 1L;
+        Article article = createArticle();
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
+        //When
+        ArticleWithCommentsDto dto = sut.getArticleWithComments(articleId);
+
+        //Then
+        assertThat(dto)
+                .hasFieldOrPropertyWithValue("title",article.getTitle())
+                .hasFieldOrPropertyWithValue("content", article.getContent())
+                .hasFieldOrPropertyWithValue("hashtag", article.getHashtag());
+        then(articleRepository).should().findById(articleId);
+    }
+
+    @DisplayName("When Selecting articleId but No comments, Return Exception")
+    @Test
+    void givenArticleId_whenSearchingArticleWithComments_thenThrowsException() {
+        //Given
+        long articleId = 0L;
+        given(articleRepository.findById(articleId)).willReturn(Optional.empty());
+        //When
+        Throwable t = catchThrowable(()-> sut.getArticleWithComments(articleId));
+        //Then
+        assertThat(t)
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("No Article - articleId :"+ articleId);
+        then(articleRepository).should().findById(articleId);
+    }
+
     @DisplayName("When Selecting article, Return Article")
     @Test
     void givenArticleId_whenSearchingArticle_thenReturnsArticle() {
@@ -108,7 +141,7 @@ class ArticleServiceTest {
         Article article = createArticle();
         given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
         //When
-        ArticleWithCommentsDto dto = sut.getArticle(articleId);
+        ArticleDto dto = sut.getArticle(articleId);
 
         //Then
         assertThat(dto)
@@ -123,7 +156,6 @@ class ArticleServiceTest {
     void givenNoneExistentArticleId_whenSearchingArticle_thenReturnsException() {
         //Given
         Long articleId = 0L;
-        Article article = createArticle();
         given(articleRepository.findById(articleId)).willReturn(Optional.empty());
 
         //When
@@ -132,7 +164,7 @@ class ArticleServiceTest {
         //Then
         assertThat(t)
                 .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage("No Article - articleId :"+ articleId);
+                .hasMessage("No Article - articleId :"+ articleId);
         then(articleRepository).should().findById(articleId);
     }
 
@@ -154,11 +186,12 @@ class ArticleServiceTest {
     @Test
     void givenNoneExistArticleInfo_whenUpdatingArticle_thenLogsWarningAndDoesNothing() {
         //Given
+        Long articleId = 1L;
         ArticleDto dto = createArticleDto("new title", "new content", "spring");
         given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
 
         //When
-        sut.updateArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
+        sut.updateArticle(articleId, dto); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
         then(articleRepository).should().getReferenceById(dto.id());
@@ -168,12 +201,13 @@ class ArticleServiceTest {
     @Test
     void givenArticleIdAndModifiedInfo_whenUpdatingArticle_thenUpdatesArticle() {
         //Given
+        Long articleId = 1L;
         Article article = createArticle();
         ArticleDto dto = createArticleDto("new title", "new content", "spring");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
 
         //When
-        sut.updateArticle(dto); //제목, 본문, 아이디, 닉네임, 해시태그
+        sut.updateArticle(articleId, dto); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
         assertThat(article)

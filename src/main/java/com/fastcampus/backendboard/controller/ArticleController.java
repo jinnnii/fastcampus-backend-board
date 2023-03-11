@@ -1,22 +1,22 @@
 package com.fastcampus.backendboard.controller;
 
-import com.fastcampus.backendboard.domain.type.SearchType;
-import com.fastcampus.backendboard.dto.ArticleDto;
+import com.fastcampus.backendboard.domain.constant.FormStatus;
+import com.fastcampus.backendboard.domain.constant.SearchType;
+import com.fastcampus.backendboard.dto.UserAccountDto;
+import com.fastcampus.backendboard.dto.request.ArticleRequest;
 import com.fastcampus.backendboard.dto.response.ArticleResponse;
 import com.fastcampus.backendboard.dto.response.ArticleWithCommentsResponse;
 import com.fastcampus.backendboard.service.ArticleService;
 import com.fastcampus.backendboard.service.PaginationService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.hql.internal.ast.tree.FromClause;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class ArticleController {
 
     @GetMapping("/{articleId}")
     public String article(@PathVariable long articleId, ModelMap map){
-        ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticle(articleId));
+        ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticleWithComments(articleId));
         map.addAttribute("article", article);
         map.addAttribute("comments", article.commentsResponse());
         map.addAttribute("totalCount", articleService.getArticleCount());
@@ -75,5 +75,59 @@ public class ArticleController {
 
         return "articles/search-hashtag";
     }
+
+    @GetMapping({"/form", "/{articleId}/form"})
+    public String articleForm(@PathVariable(required = false) Long articleId, ModelMap map){
+        if (articleId != null){
+            ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
+            map.addAttribute("article", article);
+            map.addAttribute("formStatus", FormStatus.UPDATE);
+        }
+        else map.addAttribute("formStatus", FormStatus.CREATE);
+
+        return "articles/form";
+    }
+
+    @PostMapping("/form")
+    public String saveArticle(ArticleRequest articleRequest){
+        UserAccountDto userDto = UserAccountDto.of("kej",
+                "1234",
+                "kej@email.com",
+                "K",
+                null,
+                null,
+                null,
+                null,
+                null); //TODO: 추후에 인증 정보를 넣어주어야함
+
+        articleService.saveArticle(articleRequest.toDto(userDto));
+        return "redirect:/articles";
+    }
+
+    @PutMapping({"/{articleId}"})
+    public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest){
+        UserAccountDto userDto = UserAccountDto.of("kej",
+                "1234",
+                "kej@email.com",
+                "K",
+                null,
+                null,
+                null,
+                null,
+                null); //TODO: 추후에 인증 정보를 넣어주어야함
+
+        articleService.updateArticle(articleId, articleRequest.toDto(userDto));
+        return "redirect:/articles/"+articleId;
+
+    }
+
+    @DeleteMapping("/{articleId}")
+    public String deleteArticle(@PathVariable Long articleId){
+        //TODO: 추후에 인증 정보를 넣어주어야함
+        articleService.deleteArticle(articleId);
+        return "redirect:/articles";
+    }
+
+
 
 }

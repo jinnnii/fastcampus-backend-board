@@ -1,7 +1,7 @@
 package com.fastcampus.backendboard.service;
 
 import com.fastcampus.backendboard.domain.Article;
-import com.fastcampus.backendboard.domain.type.SearchType;
+import com.fastcampus.backendboard.domain.constant.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
@@ -37,18 +37,26 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticle(long articleId) {
+    public ArticleWithCommentsDto getArticleWithComments(long articleId) {
         return articleRepository.findById(articleId).map(ArticleWithCommentsDto::from)
                 .orElseThrow(()->new EntityNotFoundException("No Article - articleId :"+articleId));
     }
+
+    @Transactional(readOnly = true)
+    public ArticleDto getArticle(long articleId) {
+        return articleRepository.findById(articleId).map(ArticleDto::from)
+                .orElseThrow(()->new EntityNotFoundException("No Article - articleId :"+articleId));
+    }
+
+
 
     public void saveArticle(ArticleDto dto) {
         articleRepository.save(dto.toEntity());
     }
 
-    public void updateArticle(ArticleDto dto) {
+    public void updateArticle(Long articleId, ArticleDto dto) {
         try{
-            Article article = articleRepository.getReferenceById(dto.id());
+            Article article = articleRepository.getReferenceById(articleId);
             if(dto.title()!=null) article.setTitle(dto.title());
             if(dto.content()!=null) article.setContent(dto.content());
             article.setHashtag(dto.hashtag());
