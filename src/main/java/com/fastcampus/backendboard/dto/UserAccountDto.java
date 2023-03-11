@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
  * A DTO for the {@link com.fastcampus.backendboard.domain.UserAccount} entity
  */
 public record UserAccountDto(
-        Long id,
         String userId,
         String userPw,
         String email,
@@ -21,7 +20,6 @@ public record UserAccountDto(
         String modifiedId
 ){
     public static UserAccountDto of (
-                          Long id,
                           String userId,
                           String userPw,
                           String email,
@@ -31,12 +29,11 @@ public record UserAccountDto(
                           String createdId,
                           LocalDateTime modifiedAt,
                           String modifiedId) {
-        return new UserAccountDto(id, userId, userPw, email, nickname, memo, createdAt, createdId, modifiedAt, modifiedId);
+        return new UserAccountDto(userId, userPw, email, nickname, memo, createdAt, createdId, modifiedAt, modifiedId);
     }
 
     public static UserAccountDto from(UserAccount entity){
         return new UserAccountDto(
-                entity.getId(),
                 entity.getUserId(),
                 entity.getUserPw(),
                 entity.getEmail(),

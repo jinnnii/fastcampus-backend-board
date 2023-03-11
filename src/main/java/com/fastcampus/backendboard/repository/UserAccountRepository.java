@@ -11,4 +11,4 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 public interface UserAccountRepository extends
-        JpaRepository<UserAccount,Long> { }
+        JpaRepository<UserAccount,String> { }

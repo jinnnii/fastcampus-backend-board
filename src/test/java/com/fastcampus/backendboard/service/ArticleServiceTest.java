@@ -232,7 +232,7 @@ class ArticleServiceTest {
 
     private UserAccountDto createUserAccountDto() {
         return UserAccountDto.of(
-                1L,"kej","1234","kej@email.com","K","this is memo",LocalDateTime.now(), "kej",LocalDateTime.now(),"kej"
+                "kej","1234","kej@email.com","K","this is memo",LocalDateTime.now(), "kej",LocalDateTime.now(),"kej"
         );
     }
 }
