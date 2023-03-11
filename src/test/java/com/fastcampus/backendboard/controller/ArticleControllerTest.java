@@ -1,11 +1,16 @@
 package com.fastcampus.backendboard.controller;
 
 import com.fastcampus.backendboard.config.SecurityConfig;
-import com.fastcampus.backendboard.domain.type.SearchType;
+import com.fastcampus.backendboard.domain.constant.FormStatus;
+import com.fastcampus.backendboard.domain.constant.SearchType;
+import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
+import com.fastcampus.backendboard.dto.request.ArticleRequest;
+import com.fastcampus.backendboard.dto.response.ArticleResponse;
 import com.fastcampus.backendboard.service.ArticleService;
 import com.fastcampus.backendboard.service.PaginationService;
+import com.fastcampus.backendboard.util.FormDataEncoder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,25 +30,24 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller test - Article")
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
     private final MockMvc mvc;
+    private final FormDataEncoder formDataEncoder;
 
     @MockBean private ArticleService articleService;
     @MockBean private PaginationService paginationService;
 
-    ArticleControllerTest(@Autowired MockMvc mvc) {
+    ArticleControllerTest(@Autowired MockMvc mvc, @Autowired FormDataEncoder formDataEncoder) {
         this.mvc = mvc;
+        this.formDataEncoder = formDataEncoder;
     }
 
     @DisplayName("[view][GET] Article list page -200 OK")
@@ -130,7 +134,7 @@ class ArticleControllerTest {
         long articleId = 1L;
         long totalCount = 1L;
 
-        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto());
+        given(articleService.getArticleWithComments(articleId)).willReturn(createArticleWithCommentsDto());
         given(articleService.getArticleCount()).willReturn(totalCount);
         //When & Then
         mvc.perform(get("/articles/"+articleId))
@@ -141,7 +145,7 @@ class ArticleControllerTest {
                 .andExpect(model().attributeExists("comments"))
                 .andExpect(model().attribute("totalCount", totalCount));
 
-        then(articleService).should().getArticle(articleId);
+        then(articleService).should().getArticleWithComments(articleId);
     }
     @Disabled
     @DisplayName("[view][GET] Article search page -200 OK")
@@ -205,10 +209,113 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(),anyInt());
     }
 
+    @DisplayName("[view][GET] Article Create page -200 OK")
+    @Test
+    void givenNothing_whenReqArticleCreateView_thenReturnsArticleCreateView() throws Exception {
+        //Given
+
+        //When & Then
+        mvc.perform( get("/articles/form") )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("formStatus", FormStatus.CREATE));
+    }
+
+    @DisplayName("[view][GET] Article Update page -200 OK")
+    @Test
+    void givenArticleId_whenReqArticleUpdateView_thenReturnsArticleUpdateView() throws Exception {
+        //Given
+        long articleId = 1L;
+        ArticleDto dto = createArticleDto();
+        given(articleService.getArticle(articleId)).willReturn(dto);
+
+        //When & Then
+        mvc.perform( get("/articles/"+articleId+"/form") )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("formStatus", FormStatus.UPDATE))
+                .andExpect(model().attribute("article", ArticleResponse.from(dto)));
+
+        then(articleService).should().getArticle(articleId);
+    }
+
+    @DisplayName("[view][POST] Save Article - Redirect ")
+    @Test
+    void givenArticleInfo_whenSavingArticle_thenReturnsArticlesView() throws Exception {
+        //Given
+        ArticleRequest article = createArticleRequest();
+
+        willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
+
+        //When & Then
+        mvc.perform( post("/articles/form")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(article))
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+
+        then(articleService).should().saveArticle(any(ArticleDto.class));
+    }
+
+    @DisplayName("[view][PUT] Update Article -Redirect")
+    @Test
+    void givenArticleInfo_whenUpdatingArticle_thenReturnsArticleDetailView() throws Exception {
+        //Given
+        long articleId = 1L;
+        ArticleRequest articleRequest = createArticleRequest("new title", "new content", "spring");
+        willDoNothing().given(articleService).updateArticle(eq(articleId), any(ArticleDto.class));
+
+        //When & Then
+        mvc.perform( put("/articles/"+articleId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(articleRequest))
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles/"+articleId))
+                .andExpect(redirectedUrl("/articles/"+articleId));
+
+        then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
+    }
+
+    @DisplayName("[view][DELETE] Delete Article -200 OK")
+    @Test
+    void givenArticleId_whenDeletingArticle_thenReturnsArticlesView() throws Exception {
+        //Given
+        long articleId = 1L;
+        willDoNothing().given(articleService).deleteArticle(articleId);
+
+        //When & Then
+        mvc.perform( delete("/articles/"+articleId)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+
+        then(articleService).should().deleteArticle(articleId);
+    }
+
     private ArticleWithCommentsDto createArticleWithCommentsDto(){
         return ArticleWithCommentsDto.of(
                 LocalDateTime.now(),"kej",  LocalDateTime.now(), "kej", 1L, "title","content", "java", createUserAccountDto(), Set.of()
         );
+    }
+
+    private ArticleDto createArticleDto(){
+        return ArticleDto.of(createUserAccountDto(), "title", "content", "java");
+    }
+
+    private ArticleRequest createArticleRequest(){
+        return ArticleRequest.of("title", "content", "java");
+    }
+
+    private ArticleRequest createArticleRequest(String title, String content, String hashtag){
+        return ArticleRequest.of(title, content, hashtag);
     }
 
     private UserAccountDto createUserAccountDto() {
@@ -216,4 +323,5 @@ class ArticleControllerTest {
                  "kej", "1234", "kej@email.com", "K", "this is memo", LocalDateTime.now(), "kej", LocalDateTime.now(), "kej"
         );
     }
+
 }
