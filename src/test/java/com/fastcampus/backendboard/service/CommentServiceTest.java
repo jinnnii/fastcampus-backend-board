@@ -137,7 +137,7 @@ class CommentServiceTest {
 
     private UserAccountDto createUserAccountDto() {
         return UserAccountDto.of(
-                1L, "kej","1234","kej@email.com","K","This is memo", LocalDateTime.now(),"kej",LocalDateTime.now(),"kej"
+                "kej","1234","kej@email.com","K","This is memo", LocalDateTime.now(),"kej",LocalDateTime.now(),"kej"
         );
     }
 

@@ -26,7 +26,7 @@ public class Article extends AuditingField{
     @Setter @Column(nullable = false, length = 10000) private String content;                 //본문
     @Setter private String hashtag;                 //해시태그
 
-    @Setter @ManyToOne(optional = false) private UserAccount userAccount;
+    @Setter @ManyToOne(optional = false) @JoinColumn(name = "userId") private UserAccount userAccount;
 
     @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article" , cascade = CascadeType.ALL)

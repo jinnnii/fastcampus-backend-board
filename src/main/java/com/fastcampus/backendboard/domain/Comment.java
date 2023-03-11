@@ -21,7 +21,7 @@ public class Comment extends AuditingField{
     @Setter @ManyToOne(optional = false) private Article article;            //게시글
     @Setter @Column(nullable = false, length = 500) private String content;             //본문
 
-    @Setter @ManyToOne(optional = false) private UserAccount userAccount;
+    @Setter @ManyToOne(optional = false) @JoinColumn(name = "userId") private UserAccount userAccount;
 
     protected Comment() {}
 
