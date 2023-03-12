@@ -1,9 +1,12 @@
 package com.fastcampus.backendboard.service;
 
+import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.Comment;
+import com.fastcampus.backendboard.domain.UserAccount;
 import com.fastcampus.backendboard.dto.CommentDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
 import com.fastcampus.backendboard.repository.CommentRepository;
+import com.fastcampus.backendboard.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.util.stream.Stream;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
+    private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
     public List<CommentDto> searchComments(Long articleId) {
@@ -28,9 +32,11 @@ public class CommentService {
 
     public void saveComment(CommentDto dto){
         try{
-        commentRepository.save(dto.toEntity(articleRepository.getReferenceById(dto.articleId())));
+            Article article = articleRepository.getReferenceById(dto.articleId());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            commentRepository.save(dto.toEntity(article, userAccount));
         }catch (EntityNotFoundException e){
-            log.warn("Failed Save Comment, Not Found Article - dto :{}",dto);
+            log.warn("Failed Save Comment, Not Found Article or User - {}",e.getLocalizedMessage());
         }
     };
     public void updateComment(CommentDto dto){

@@ -7,6 +7,7 @@ import com.fastcampus.backendboard.dto.CommentDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
 import com.fastcampus.backendboard.repository.CommentRepository;
+import com.fastcampus.backendboard.repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,8 @@ class CommentServiceTest {
     @Mock private ArticleRepository articleRepository;
     @Mock private CommentRepository commentRepository;
 
+    @Mock private UserAccountRepository userAccountRepository;
+
     @DisplayName("When Searching articlesId, Return Comments")
     @Test
     void givenArticleId_whenSearchingComments_thenReturnComments() {
@@ -56,6 +59,7 @@ class CommentServiceTest {
         //Given
         CommentDto dto = createCommentDto("comment");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(commentRepository.save(any(Comment.class))).willReturn(null);
 
         //When
@@ -63,6 +67,7 @@ class CommentServiceTest {
 
         //Then
         then(articleRepository).should().getReferenceById(dto.articleId());
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(commentRepository).should().save(any(Comment.class));
     }
 
@@ -78,6 +83,7 @@ class CommentServiceTest {
 
         //Then
         then(articleRepository).should().getReferenceById(dto.articleId());
+        then(userAccountRepository).shouldHaveNoInteractions();
         then(commentRepository).shouldHaveNoMoreInteractions();
     }
 
