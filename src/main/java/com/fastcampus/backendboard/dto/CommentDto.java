@@ -2,6 +2,7 @@ package com.fastcampus.backendboard.dto;
 
 import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.Comment;
+import com.fastcampus.backendboard.domain.UserAccount;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,6 +32,10 @@ public record CommentDto(
         return new CommentDto(id, articleId, content, createdAt, createdId, modifiedAt, modifiedId, userAccountDto);
     }
 
+    public static CommentDto of(Long articleId, String content, UserAccountDto userAccountDto){
+        return new CommentDto(null, articleId, content, null, null, null, null, userAccountDto);
+    }
+
     public static CommentDto from(Comment entity){
         return new CommentDto(
                 entity.getId(),
@@ -46,5 +51,9 @@ public record CommentDto(
 
     public Comment toEntity(Article article){
         return Comment.of(userAccountDto.toEntity(), article, content);
+    }
+
+    public Comment toEntity(Article article, UserAccount userAccount) {
+        return  Comment.of(userAccount, article, content);
     }
 }

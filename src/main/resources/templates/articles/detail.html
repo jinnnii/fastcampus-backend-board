@@ -44,9 +44,10 @@
 
     <div class="row g-5">
       <section>
-        <form class="panel">
+        <form class="panel" id="comment-form">
           <div class="panel-body">
-            <label for="comment-textbox"></label>
+            <input type="hidden" class="article-id"/>
+            <label for="comment-textbox" hidden>댓글쓰기</label>
             <textarea class="form-control comment-textbox" id="comment-textbox"  rows="2" placeholder="댓글 쓰기.."></textarea>
             <div class="mar-top clearfix">
               <button class="btn btn-sm btn-primary pull-right" id="comment-submit" type="submit"><i class="fa fa-pencil fa-fw"></i> 쓰기</button>
@@ -68,7 +69,10 @@
                   <p id="co-created-at" class="text-muted text-sm">
                     <i class="fa fa-mobile fa-lg"></i> From Mobile -
                     <time> 11 min ago</time>
-                    <button type="submit" class="btn btn-sm text-sm btn-danger">삭제</button>
+                    <form id="co-del-btn" class="float-end">
+                      <input type="hidden" class="article-id">
+                      <button type="submit" class="btn btn-sm text-sm btn-danger">삭제</button>
+                    </form>
                   </p>
                 </div>
                 <p id="co-content">consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
