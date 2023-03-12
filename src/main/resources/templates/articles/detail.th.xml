@@ -14,6 +14,12 @@
         <attr sel="#article-form" th:action="'/articles/'+*{id} " th:method="delete"/>
         <attr sel="#update-article" th:onclick="'location.href=\'/articles/'+ *{id} +'/form\''"/>
 
+        <attr sel=".article-id" th:value="*{id}" th:name="articleId"/>
+
+        <attr sel="#comment-form" th:action="@{/comments/save}" th:method="post">
+            <attr sel="#comment-textbox" th:name="content"/>
+        </attr>
+
         <attr sel="#article-comments">
             <attr sel=".panel-body" th:remove="all-but-first">
                 <attr sel=".parent-comment" th:each="comment:${comments}">
@@ -21,6 +27,7 @@
                     <attr sel="#co-nickname" th:text="${comment.nickname}"/>
                     <attr sel="#co-created-at/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}"/>
                     <attr sel="#co-content" th:text="${comment.content}"/>
+                    <attr sel="#co-del-btn" th:action="@{'/comments/'+${comment.id}}" th:method="delete"/>
                 </attr>
             </attr>
         </attr>
