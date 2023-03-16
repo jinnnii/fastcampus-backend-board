@@ -31,3 +31,18 @@ spring:
     base-path: /api
     detection-strategy: annotated
   thymeleaf3.decoupled-logic: true
+
+---
+spring:
+  config.activate.on-profile: cloud-type
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: create
+  sql.init.mode: always
