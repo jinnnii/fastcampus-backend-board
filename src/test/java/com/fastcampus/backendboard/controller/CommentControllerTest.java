@@ -1,6 +1,7 @@
 package com.fastcampus.backendboard.controller;
 
 import com.fastcampus.backendboard.config.SecurityConfig;
+import com.fastcampus.backendboard.config.TestSecurityConfig;
 import com.fastcampus.backendboard.dto.CommentDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.dto.request.CommentRequest;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -28,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller - Comment")
-@Import({SecurityConfig.class, FormDataEncoder.class})
+@Import({TestSecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(CommentController.class)
 class CommentControllerTest {
     private final MockMvc mvc;
@@ -41,6 +44,7 @@ class CommentControllerTest {
         this.formDataEncoder = formDataEncoder;
     }
 
+    @WithUserDetails(value = "test" , setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][POST] Insert Comment - 200 OK ")
     @Test
     void givenCommentInfo_whenRequesting_thenSavesComment() throws Exception {
@@ -62,14 +66,16 @@ class CommentControllerTest {
         then(commentService).should().saveComment(any(CommentDto.class));
     }
 
+    @WithUserDetails(value = "test" , setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][DELETE] Delete Comment - 200 OK ")
     @Test
     void givenCommentIdAndArticleId_whenRequesting_thenDeletesComment() throws Exception {
         //Given
         long articleId = 1L;
         long commentId = 1L;
+        String userId = "test";
 
-        willDoNothing().given(commentService).deleteComment(commentId);
+        willDoNothing().given(commentService).deleteComment(commentId,userId);
 
         //When & Then
         mvc.perform(delete("/comments/"+commentId)
@@ -81,6 +87,6 @@ class CommentControllerTest {
                 .andExpect(view().name("redirect:/articles/"+articleId))
                 .andExpect(redirectedUrl("/articles/"+articleId));
 
-        then(commentService).should().deleteComment(commentId);
+        then(commentService).should().deleteComment(commentId,userId);
     }
 }

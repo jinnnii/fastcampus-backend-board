@@ -1,7 +1,6 @@
 package com.fastcampus.backendboard.dto.response;
 
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -19,8 +18,9 @@ public record ArticleWithCommentsResponse(
         LocalDateTime createdAt,
         String email,
         String nickname,
+        String userId,
         Set<CommentResponse> commentsResponse
-) implements Serializable {
+){
     public static ArticleWithCommentsResponse of(Long id,
                                                  String title,
                                                  String content,
@@ -28,8 +28,9 @@ public record ArticleWithCommentsResponse(
                                                  LocalDateTime createdAt,
                                                  String email,
                                                  String nickname,
+                                                 String userId,
                                                  Set<CommentResponse> commentResponses) {
-        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt, email, nickname, commentResponses);
+        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt, email, nickname, userId, commentResponses);
     }
 
     public static ArticleWithCommentsResponse from(ArticleWithCommentsDto dto){
@@ -45,6 +46,7 @@ public record ArticleWithCommentsResponse(
                 dto.createdAt(),
                 dto.userAccountDto().email(),
                 nickname,
+                dto.userAccountDto().userId(),
                 dto.commentDtos().stream()
                         .map(CommentResponse::from)
                         .collect(Collectors.toCollection(LinkedHashSet::new))

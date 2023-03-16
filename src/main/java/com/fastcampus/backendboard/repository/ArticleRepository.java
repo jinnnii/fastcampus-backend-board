@@ -27,6 +27,8 @@ public interface ArticleRepository extends
     Page<Article> findByHashtag(String hashtag, Pageable pageable);
     Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
     Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
+    void deleteByIdAndUserAccount_UserId(long articleId, String userId);
+    
     @Override // 검색에 대한 세부적인 구성
     default void customize(QuerydslBindings bindings, QArticle root)
     {
@@ -39,4 +41,5 @@ public interface ArticleRepository extends
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdId).first(StringExpression::containsIgnoreCase);
     }
+
 }

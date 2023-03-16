@@ -47,7 +47,7 @@ public class CommentService {
             log.warn("Failed Update Comment, Not Found Article - dto :{}",dto);
         }
     };
-    public void deleteComment(Long commentId){
-        commentRepository.deleteById(commentId);
+    public void deleteComment(Long commentId, String userId){
+        commentRepository.deleteByIdAndUserAccount_UserId(commentId, userId);
     };
 }

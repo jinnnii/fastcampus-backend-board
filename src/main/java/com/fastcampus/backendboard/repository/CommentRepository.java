@@ -22,6 +22,8 @@ public interface CommentRepository extends
 
     List<Comment> findByArticle_Id(Long articleId);
 
+    void deleteByIdAndUserAccount_UserId(Long commentId, String userId);
+
     @Override
     default void customize(QuerydslBindings bindings, QComment root)
     {
@@ -31,4 +33,5 @@ public interface CommentRepository extends
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdId).first(StringExpression::containsIgnoreCase);
     }
+
 }

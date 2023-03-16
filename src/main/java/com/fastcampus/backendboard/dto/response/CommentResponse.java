@@ -10,11 +10,12 @@ public record CommentResponse(
         String content,
         LocalDateTime createdAt,
         String email,
-        String nickname
+        String nickname,
+        String userId
 
 ) implements Serializable {
-    public static CommentResponse of (Long id, String content, LocalDateTime createdAt, String email, String nickname) {
-        return new CommentResponse(id, content, createdAt, email, nickname);
+    public static CommentResponse of (Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId) {
+        return new CommentResponse(id, content, createdAt, email, nickname, userId);
     }
 
     public static CommentResponse from(CommentDto dto){
@@ -27,7 +28,8 @@ public record CommentResponse(
                 dto.content(),
                 dto.createdAt(),
                 dto.userAccountDto().email(),
-                nickname
+                nickname,
+                dto.userAccountDto().userId()
         );
     }
 }

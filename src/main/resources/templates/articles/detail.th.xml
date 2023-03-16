@@ -11,8 +11,10 @@
         <attr sel="#hashtag/a" th:text="*{hashtag}"/>
         <attr sel="#article-content" th:text="*{content}"/>
 
-        <attr sel="#article-form" th:action="'/articles/'+*{id} " th:method="delete"/>
-        <attr sel="#update-article" th:onclick="'location.href=\'/articles/'+ *{id} +'/form\''"/>
+        <attr sel="#article-buttons" th:if="${#authorization.expression('isAuthenticated()')} and *{userId} == ${#authentication.name}">
+            <attr sel="#article-form" th:action="'/articles/'+*{id} " th:method="delete"/>
+            <attr sel="#update-article" th:onclick="'location.href=\'/articles/'+ *{id} +'/form\''"/>
+        </attr>
 
         <attr sel=".article-id" th:value="*{id}" th:name="articleId"/>
 
@@ -27,7 +29,8 @@
                     <attr sel="#co-nickname" th:text="${comment.nickname}"/>
                     <attr sel="#co-created-at/time" th:datetime="${comment.createdAt}" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}"/>
                     <attr sel="#co-content" th:text="${comment.content}"/>
-                    <attr sel="#co-del-btn" th:action="@{'/comments/'+${comment.id}}" th:method="delete"/>
+                    <attr sel="#co-del-btn" th:action="@{'/comments/'+${comment.id}}" th:method="delete"
+                          th:if="${#authorization.expression('isAuthenticated()')} and ${comment.userId} == ${#authentication.name}"/>
                 </attr>
             </attr>
         </attr>

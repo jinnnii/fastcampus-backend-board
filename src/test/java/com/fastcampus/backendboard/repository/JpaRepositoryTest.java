@@ -9,23 +9,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @ActiveProfiles("testdb")
 // @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("Jpa repository test")
-@Import(JpaConfig.class)
+@Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest
 class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final UserAccountRepository userAccountRepository;
-
 
     JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
                       @Autowired CommentRepository commentRepository,
@@ -89,5 +93,14 @@ class JpaRepositoryTest {
                 .isEqualTo(preArticleCnt-1);
         assertThat(commentRepository.count())
                 .isEqualTo(preCommentCnt-delCommentCnt);
+    }
+
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJpaConfig{
+        @Bean
+        public AuditorAware<String> auditorAware(){
+            return ()-> Optional.of("kej");
+        }
     }
 }

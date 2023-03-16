@@ -6,6 +6,7 @@ import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.dto.request.ArticleRequest;
 import com.fastcampus.backendboard.dto.response.ArticleResponse;
 import com.fastcampus.backendboard.dto.response.ArticleWithCommentsResponse;
+import com.fastcampus.backendboard.dto.security.BoardPrincipal;
 import com.fastcampus.backendboard.service.ArticleService;
 import com.fastcampus.backendboard.service.PaginationService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -89,42 +91,28 @@ public class ArticleController {
     }
 
     @PostMapping("/form")
-    public String saveArticle(ArticleRequest articleRequest){
-        UserAccountDto userDto = UserAccountDto.of("kej",
-                "1234",
-                "kej@email.com",
-                "K",
-                null,
-                null,
-                null,
-                null,
-                null); //TODO: 추후에 인증 정보를 넣어주어야함
-
-        articleService.saveArticle(articleRequest.toDto(userDto));
+    public String saveArticle(
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
+            ArticleRequest articleRequest){
+        articleService.saveArticle(articleRequest.toDto(boardPrincipal.toDto()));
         return "redirect:/articles";
     }
 
     @PutMapping({"/{articleId}"})
-    public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest){
-        UserAccountDto userDto = UserAccountDto.of("kej",
-                "1234",
-                "kej@email.com",
-                "K",
-                null,
-                null,
-                null,
-                null,
-                null); //TODO: 추후에 인증 정보를 넣어주어야함
-
-        articleService.updateArticle(articleId, articleRequest.toDto(userDto));
+    public String updateArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
+            ArticleRequest articleRequest){
+        articleService.updateArticle(articleId, articleRequest.toDto(boardPrincipal.toDto()));
         return "redirect:/articles/"+articleId;
 
     }
 
     @DeleteMapping("/{articleId}")
-    public String deleteArticle(@PathVariable Long articleId){
-        //TODO: 추후에 인증 정보를 넣어주어야함
-        articleService.deleteArticle(articleId);
+    public String deleteArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal){
+        articleService.deleteArticle(articleId, boardPrincipal.username());
         return "redirect:/articles";
     }
 
