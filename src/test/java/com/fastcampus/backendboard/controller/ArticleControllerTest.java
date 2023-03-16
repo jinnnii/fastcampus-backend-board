@@ -1,6 +1,7 @@
 package com.fastcampus.backendboard.controller;
 
 import com.fastcampus.backendboard.config.SecurityConfig;
+import com.fastcampus.backendboard.config.TestSecurityConfig;
 import com.fastcampus.backendboard.domain.constant.FormStatus;
 import com.fastcampus.backendboard.domain.constant.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
@@ -23,6 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -36,7 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller test - Article")
-@Import({SecurityConfig.class, FormDataEncoder.class})
+@Import({TestSecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(ArticleController.class)
 class ArticleControllerTest {
     private final MockMvc mvc;
@@ -127,6 +131,21 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
+    @DisplayName("[view][GET] Article (detail) page - No Authentication")
+    @Test
+    void givenNothing_whenReqArticleView_thenRedirectsToLoginPage() throws Exception {
+        //Given
+        long articleId = 1L;
+
+        //When & Then
+        mvc.perform(get("/articles/"+articleId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+
+        then(articleService).shouldHaveNoInteractions();
+    }
+
+    @WithMockUser
     @DisplayName("[view][GET] Article (detail) page -200 OK")
     @Test
     void givenNothing_whenReqArticleView_thenReturnsArticleView() throws Exception {
@@ -209,6 +228,7 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(),anyInt());
     }
 
+    @WithMockUser
     @DisplayName("[view][GET] Article Create page -200 OK")
     @Test
     void givenNothing_whenReqArticleCreateView_thenReturnsArticleCreateView() throws Exception {
@@ -222,6 +242,7 @@ class ArticleControllerTest {
                 .andExpect(model().attribute("formStatus", FormStatus.CREATE));
     }
 
+    @WithMockUser
     @DisplayName("[view][GET] Article Update page -200 OK")
     @Test
     void givenArticleId_whenReqArticleUpdateView_thenReturnsArticleUpdateView() throws Exception {
@@ -241,6 +262,20 @@ class ArticleControllerTest {
         then(articleService).should().getArticle(articleId);
     }
 
+    @DisplayName("[view][GET] 게시글 수정 페이지 - 인증 없을 땐 로그인 페이지로 이동")
+    @Test
+    void givenNothing_whenRequesting_thenRedirectsToLoginPage() throws Exception {
+        // Given
+        long articleId = 1L;
+
+        // When & Then
+        mvc.perform(get("/articles/"+articleId+"/form"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+        then(articleService).shouldHaveNoInteractions();
+    }
+
+    @WithUserDetails(value = "test", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][POST] Save Article - Redirect ")
     @Test
     void givenArticleInfo_whenSavingArticle_thenReturnsArticlesView() throws Exception {
@@ -262,6 +297,7 @@ class ArticleControllerTest {
         then(articleService).should().saveArticle(any(ArticleDto.class));
     }
 
+    @WithUserDetails(value = "test", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][PUT] Update Article -Redirect")
     @Test
     void givenArticleInfo_whenUpdatingArticle_thenReturnsArticleDetailView() throws Exception {
@@ -283,12 +319,15 @@ class ArticleControllerTest {
         then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
     }
 
+    @WithUserDetails(value = "test", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("[view][DELETE] Delete Article -200 OK")
     @Test
     void givenArticleId_whenDeletingArticle_thenReturnsArticlesView() throws Exception {
         //Given
         long articleId = 1L;
-        willDoNothing().given(articleService).deleteArticle(articleId);
+        String userId ="test";
+
+        willDoNothing().given(articleService).deleteArticle(articleId, userId);
 
         //When & Then
         mvc.perform( delete("/articles/"+articleId)
@@ -297,7 +336,7 @@ class ArticleControllerTest {
                 .andExpect(view().name("redirect:/articles"))
                 .andExpect(redirectedUrl("/articles"));
 
-        then(articleService).should().deleteArticle(articleId);
+        then(articleService).should().deleteArticle(articleId, userId);
     }
 
     private ArticleWithCommentsDto createArticleWithCommentsDto(){

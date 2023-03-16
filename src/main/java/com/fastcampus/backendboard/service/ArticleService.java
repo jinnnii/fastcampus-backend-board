@@ -1,10 +1,12 @@
 package com.fastcampus.backendboard.service;
 
 import com.fastcampus.backendboard.domain.Article;
+import com.fastcampus.backendboard.domain.UserAccount;
 import com.fastcampus.backendboard.domain.constant.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
+import com.fastcampus.backendboard.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,8 @@ import java.util.List;
 @Service
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final UserAccountRepository userAccountRepository;
+
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
         if (searchKeyword==null || searchKeyword.isBlank()){
@@ -51,22 +55,27 @@ public class ArticleService {
 
 
     public void saveArticle(ArticleDto dto) {
-        articleRepository.save(dto.toEntity());
+        UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+        articleRepository.save(dto.toEntity(userAccount));
     }
 
     public void updateArticle(Long articleId, ArticleDto dto) {
         try{
             Article article = articleRepository.getReferenceById(articleId);
-            if(dto.title()!=null) article.setTitle(dto.title());
-            if(dto.content()!=null) article.setContent(dto.content());
-            article.setHashtag(dto.hashtag());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+
+            if(article.getUserAccount().equals(userAccount)){
+                if(dto.title()!=null) article.setTitle(dto.title());
+                if(dto.content()!=null) article.setContent(dto.content());
+                article.setHashtag(dto.hashtag());
+            }
         }catch (EntityNotFoundException e){
-            log.warn("Failed update article. Not found article - dto:{}", dto);
+            log.warn("Failed update article. Not found requested article Info - {}", e.getLocalizedMessage());
         }
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     public long getArticleCount(){

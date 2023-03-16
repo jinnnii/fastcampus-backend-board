@@ -7,6 +7,7 @@ import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.repository.ArticleRepository;
+import com.fastcampus.backendboard.repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ import static org.mockito.BDDMockito.*;
 class ArticleServiceTest {
     @InjectMocks private ArticleService sut;
     @Mock private ArticleRepository articleRepository;
+    @Mock private UserAccountRepository userAccountRepository;
 
     @DisplayName("When no Searching articles, Return Articles with Paging")
     @Test
@@ -201,13 +203,13 @@ class ArticleServiceTest {
     @Test
     void givenArticleIdAndModifiedInfo_whenUpdatingArticle_thenUpdatesArticle() {
         //Given
-        Long articleId = 1L;
         Article article = createArticle();
         ArticleDto dto = createArticleDto("new title", "new content", "spring");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(dto.userAccountDto().toEntity());
 
         //When
-        sut.updateArticle(articleId, dto); //제목, 본문, 아이디, 닉네임, 해시태그
+        sut.updateArticle(dto.id(), dto); //제목, 본문, 아이디, 닉네임, 해시태그
 
         //Then
         assertThat(article)
@@ -215,6 +217,7 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.content())
                 .hasFieldOrPropertyWithValue("hashtag", dto.hashtag());
         then(articleRepository).should().getReferenceById(dto.id());
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
     }
 
     @DisplayName("When Inserting articleId, Delete Article")
@@ -222,13 +225,14 @@ class ArticleServiceTest {
     void givenArticleId_whenDeletingArticle_thenDeletesArticle() {
         //Given
         Long articleId = 1L;
-        willDoNothing().given(articleRepository).deleteById(articleId);
+        String userId = "kej";
+        willDoNothing().given(articleRepository).deleteByIdAndUserAccount_UserId(articleId, userId);
 
         //When
-        sut.deleteArticle(1L);
+        sut.deleteArticle(1L, userId);
 
         //Then
-        then(articleRepository).should().deleteById(articleId);
+        then(articleRepository).should().deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     @DisplayName("When Selecting article Count, Return Article Count")

@@ -1,6 +1,7 @@
 package com.fastcampus.backendboard.controller;
 
 import com.fastcampus.backendboard.config.SecurityConfig;
+import com.fastcampus.backendboard.config.TestSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("View Controller test - Auth")
 @WebMvcTest(AuthController.class)
-@Import(SecurityConfig.class)
+@Import(TestSecurityConfig.class)
 public class AuthController {
     private final MockMvc mvc;
 

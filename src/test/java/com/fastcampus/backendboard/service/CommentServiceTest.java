@@ -126,13 +126,14 @@ class CommentServiceTest {
     void givenCommentId_whenDeletingComment_thenDeletesComment(){
         ///Given
         Long commentId = 1L;
-        willDoNothing().given(commentRepository).deleteById(commentId);
+        String userId = "kej";
+        willDoNothing().given(commentRepository).deleteByIdAndUserAccount_UserId(commentId, userId);
 
         //When
-        sut.deleteComment(commentId);
+        sut.deleteComment(commentId, userId);
 
         //Then
-        then(commentRepository).should().deleteById(commentId);
+        then(commentRepository).should().deleteByIdAndUserAccount_UserId(commentId, userId);
     }
 
     private CommentDto createCommentDto(String content){
