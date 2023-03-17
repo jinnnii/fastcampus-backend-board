@@ -13,12 +13,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View Controller test - Auth")
-@WebMvcTest(AuthController.class)
+@WebMvcTest(AuthControllerTest.class)
 @Import(TestSecurityConfig.class)
-public class AuthController {
+public class AuthControllerTest {
     private final MockMvc mvc;
 
-    AuthController(@Autowired MockMvc mvc) {
+    AuthControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
     }
     @DisplayName("[view][GET] Login page -200 OK")
