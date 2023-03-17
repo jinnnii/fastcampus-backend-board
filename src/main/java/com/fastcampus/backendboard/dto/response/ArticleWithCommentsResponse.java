@@ -1,15 +1,11 @@
 package com.fastcampus.backendboard.dto.response;
 
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * A DTO for the {@link com.fastcampus.backendboard.domain.Article} entity
- */
 public record ArticleWithCommentsResponse(
         Long id,
         String title,

@@ -7,9 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * A DTO for the {@link com.fastcampus.backendboard.domain.Article} entity
- */
 public record ArticleWithCommentsDto(
         LocalDateTime createdAt,
         String createdId,

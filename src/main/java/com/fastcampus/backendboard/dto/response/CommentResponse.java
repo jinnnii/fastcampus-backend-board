@@ -1,8 +1,6 @@
 package com.fastcampus.backendboard.dto.response;
 
 import com.fastcampus.backendboard.dto.CommentDto;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record CommentResponse(
@@ -13,7 +11,7 @@ public record CommentResponse(
         String nickname,
         String userId
 
-) implements Serializable {
+) {
     public static CommentResponse of (Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId) {
         return new CommentResponse(id, content, createdAt, email, nickname, userId);
     }

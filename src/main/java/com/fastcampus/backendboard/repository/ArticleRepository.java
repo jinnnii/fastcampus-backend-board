@@ -1,7 +1,6 @@
 package com.fastcampus.backendboard.repository;
 
 import com.fastcampus.backendboard.domain.Article;
-import com.fastcampus.backendboard.domain.Comment;
 import com.fastcampus.backendboard.domain.QArticle;
 import com.fastcampus.backendboard.repository.querydsl.ArticleRepositoryCustom;
 import com.querydsl.core.types.dsl.DateTimeExpression;
@@ -13,8 +12,6 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
-import java.util.List;
 
 @RepositoryRestResource
 public interface ArticleRepository extends

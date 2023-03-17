@@ -1,13 +1,10 @@
 package com.fastcampus.backendboard.repository;
 
-import com.fastcampus.backendboard.config.JpaConfig;
 import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.UserAccount;
-import org.apache.catalina.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 
 @ActiveProfiles("testdb")
-// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("Jpa repository test")
 @Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest
