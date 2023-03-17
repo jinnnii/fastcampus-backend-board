@@ -1,9 +1,7 @@
 package com.fastcampus.backendboard.controller;
 
-import com.fastcampus.backendboard.config.SecurityConfig;
 import com.fastcampus.backendboard.config.TestSecurityConfig;
 import com.fastcampus.backendboard.dto.CommentDto;
-import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.dto.request.CommentRequest;
 import com.fastcampus.backendboard.service.CommentService;
 import com.fastcampus.backendboard.util.FormDataEncoder;
@@ -17,11 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.BDDAssumptions.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;

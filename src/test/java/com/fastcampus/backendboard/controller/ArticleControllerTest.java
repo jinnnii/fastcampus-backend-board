@@ -1,6 +1,5 @@
 package com.fastcampus.backendboard.controller;
 
-import com.fastcampus.backendboard.config.SecurityConfig;
 import com.fastcampus.backendboard.config.TestSecurityConfig;
 import com.fastcampus.backendboard.domain.constant.FormStatus;
 import com.fastcampus.backendboard.domain.constant.SearchType;

@@ -1,13 +1,8 @@
 package com.fastcampus.backendboard.dto;
 
 import com.fastcampus.backendboard.domain.UserAccount;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * A DTO for the {@link com.fastcampus.backendboard.domain.UserAccount} entity
- */
 public record UserAccountDto(
         String userId,
         String userPw,

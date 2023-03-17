@@ -1,6 +1,5 @@
 package com.fastcampus.backendboard.controller;
 
-import com.fastcampus.backendboard.config.SecurityConfig;
 import com.fastcampus.backendboard.config.TestSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,15 +11,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 @DisplayName("View Controller test - Auth")
-@WebMvcTest(AuthController.class)
+@WebMvcTest(AuthControllerTest.class)
 @Import(TestSecurityConfig.class)
-public class AuthController {
+public class AuthControllerTest {
     private final MockMvc mvc;
 
-    AuthController(@Autowired MockMvc mvc) {
+    AuthControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
     }
     @DisplayName("[view][GET] Login page -200 OK")

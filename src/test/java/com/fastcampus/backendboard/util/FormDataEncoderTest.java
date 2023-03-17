@@ -13,8 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("Util Test - Form Data Encoder")
-@Import({FormDataEncoder.class, ObjectMapper.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = void.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {FormDataEncoder.class, ObjectMapper.class})
 public class FormDataEncoderTest {
     private final FormDataEncoder formDataEncoder;
 
