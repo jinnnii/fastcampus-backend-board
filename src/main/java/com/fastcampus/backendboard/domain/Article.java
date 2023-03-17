@@ -21,12 +21,16 @@ import java.util.Set;
 public class Article extends AuditingField{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                        //
-    @Setter @Column(nullable = false) private String title;                   //제목
-    @Setter @Column(nullable = false, length = 10000) private String content;                 //본문
-    @Setter private String hashtag;                 //해시태그
+    private Long id;
 
-    @Setter @ManyToOne(optional = false) @JoinColumn(name = "userId") private UserAccount userAccount;
+    @Setter @Column(nullable = false)                   private String title;
+    @Setter @Column(nullable = false, length = 10000)   private String content;
+    @Setter                                             private String hashtag;
+
+    @Setter
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userId")
+    private UserAccount userAccount;
 
     @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article" , cascade = CascadeType.ALL)
