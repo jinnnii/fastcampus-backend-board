@@ -1,6 +1,8 @@
 package com.fastcampus.backendboard.dto.response;
 
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
+import com.fastcampus.backendboard.dto.HashtagDto;
+
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,7 +12,7 @@ public record ArticleWithCommentsResponse(
         Long id,
         String title,
         String content,
-        String hashtag,
+        Set<String> hashtags,
         LocalDateTime createdAt,
         String email,
         String nickname,
@@ -20,13 +22,13 @@ public record ArticleWithCommentsResponse(
     public static ArticleWithCommentsResponse of(Long id,
                                                  String title,
                                                  String content,
-                                                 String hashtag,
+                                                 Set<String> hashtags,
                                                  LocalDateTime createdAt,
                                                  String email,
                                                  String nickname,
                                                  String userId,
                                                  Set<CommentResponse> commentResponses) {
-        return new ArticleWithCommentsResponse(id, title, content, hashtag, createdAt, email, nickname, userId, commentResponses);
+        return new ArticleWithCommentsResponse(id, title, content, hashtags, createdAt, email, nickname, userId, commentResponses);
     }
 
     public static ArticleWithCommentsResponse from(ArticleWithCommentsDto dto){
@@ -38,7 +40,9 @@ public record ArticleWithCommentsResponse(
                 dto.id(),
                 dto.title(),
                 dto.content(),
-                dto.hashtag(),
+                dto.hashtagDtos().stream()
+                        .map(HashtagDto::hashtagName)
+                        .collect(Collectors.toUnmodifiableSet()),
                 dto.createdAt(),
                 dto.userAccountDto().email(),
                 nickname,
