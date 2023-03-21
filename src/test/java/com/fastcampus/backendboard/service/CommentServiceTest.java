@@ -2,6 +2,7 @@ package com.fastcampus.backendboard.service;
 
 import com.fastcampus.backendboard.domain.Article;
 import com.fastcampus.backendboard.domain.Comment;
+import com.fastcampus.backendboard.domain.Hashtag;
 import com.fastcampus.backendboard.domain.UserAccount;
 import com.fastcampus.backendboard.dto.CommentDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -148,7 +150,7 @@ class CommentServiceTest {
 
     private Comment createComment(String content){
         return Comment.of(createUserAccount(),
-                Article.of(createUserAccount(), "new title", "new content", "java"),
+                createArticle(),
                 content
         );
     }
@@ -160,9 +162,16 @@ class CommentServiceTest {
     }
 
     private Article createArticle(){
-        return Article.of(
-                createUserAccount(),"title","content","spring"
+        Article article = Article.of(
+                createUserAccount(), "title", "content"
         );
+
+        article.addHashtags(Set.of(createHashtag(article)));
+        return article;
+    }
+
+    private Hashtag createHashtag(Article article) {
+        return Hashtag.of("java");
     }
 
 }

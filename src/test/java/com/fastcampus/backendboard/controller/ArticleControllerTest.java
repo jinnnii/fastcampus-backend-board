@@ -5,6 +5,7 @@ import com.fastcampus.backendboard.domain.constant.FormStatus;
 import com.fastcampus.backendboard.domain.constant.SearchType;
 import com.fastcampus.backendboard.dto.ArticleDto;
 import com.fastcampus.backendboard.dto.ArticleWithCommentsDto;
+import com.fastcampus.backendboard.dto.HashtagDto;
 import com.fastcampus.backendboard.dto.UserAccountDto;
 import com.fastcampus.backendboard.dto.request.ArticleRequest;
 import com.fastcampus.backendboard.dto.response.ArticleResponse;
@@ -66,7 +67,9 @@ class ArticleControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/index"))
                 .andExpect(model().attributeExists("articles"))
-                .andExpect(model().attributeExists("paginationBarNumbers"));
+                .andExpect(model().attributeExists("paginationBarNumbers"))
+                .andExpect(model().attributeExists("searchTypes"))
+                .andExpect(model().attribute("searchTypeHashtag", SearchType.HASHTAG));
 
         then(articleService).should().searchArticles(eq(null),eq(null), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(),anyInt());
@@ -161,7 +164,8 @@ class ArticleControllerTest {
                 .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("comments"))
-                .andExpect(model().attribute("totalCount", totalCount));
+                .andExpect(model().attribute("totalCount", totalCount))
+                .andExpect(model().attribute("searchTypeHashtag", SearchType.HASHTAG));
 
         then(articleService).should().getArticleWithComments(articleId);
     }
@@ -340,20 +344,20 @@ class ArticleControllerTest {
 
     private ArticleWithCommentsDto createArticleWithCommentsDto(){
         return ArticleWithCommentsDto.of(
-                LocalDateTime.now(),"kej",  LocalDateTime.now(), "kej", 1L, "title","content", "java", createUserAccountDto(), Set.of()
+                LocalDateTime.now(),"kej",  LocalDateTime.now(), "kej", 1L, "title","content", Set.of(HashtagDto.of("java")), createUserAccountDto(), Set.of()
         );
     }
 
     private ArticleDto createArticleDto(){
-        return ArticleDto.of(createUserAccountDto(), "title", "content", "java");
+        return ArticleDto.of(createUserAccountDto(), "title", "content", Set.of(HashtagDto.of("java")));
     }
 
     private ArticleRequest createArticleRequest(){
-        return ArticleRequest.of("title", "content", "java");
+        return ArticleRequest.of("title", "content");
     }
 
     private ArticleRequest createArticleRequest(String title, String content, String hashtag){
-        return ArticleRequest.of(title, content, hashtag);
+        return ArticleRequest.of(title, content);
     }
 
     private UserAccountDto createUserAccountDto() {

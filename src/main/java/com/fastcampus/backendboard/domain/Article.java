@@ -13,7 +13,6 @@ import java.util.Set;
 @ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "title"),
-        @Index(columnList = "hashtag"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdId")
 })
@@ -25,7 +24,15 @@ public class Article extends AuditingField{
 
     @Setter @Column(nullable = false)                   private String title;
     @Setter @Column(nullable = false, length = 10000)   private String content;
-    @Setter                                             private String hashtag;
+
+    @ToString.Exclude
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "article_hashtag",
+            joinColumns = @JoinColumn(name = "articleId"),
+            inverseJoinColumns = @JoinColumn(name = "hashtagId")
+    )
+    private Set<Hashtag> hashtags = new LinkedHashSet<>();
 
     @Setter
     @ManyToOne(optional = false)
@@ -39,15 +46,25 @@ public class Article extends AuditingField{
 
     protected Article(){}
 
-    private Article(UserAccount userAccount, String title, String content, String hashtag) {
+    private Article(UserAccount userAccount, String title, String content) {
         this.userAccount = userAccount;
         this.title = title;
         this.content = content;
-        this.hashtag = hashtag;
     }
 
-    public static Article of(UserAccount userAccount, String title, String content, String hashtag) {
-        return new Article(userAccount, title,content,hashtag);
+    public static Article of(UserAccount userAccount, String title, String content) {
+        return new Article(userAccount, title,content);
+    }
+
+    public void addHashtag(Hashtag hashtag){
+        this.getHashtags().add(hashtag);
+    }
+    public void addHashtags(Set<Hashtag> hashtags){
+        this.getHashtags().addAll(hashtags);
+    }
+
+    public void clearHashtags(){
+        this.getHashtags().clear();
     }
 
     @Override
