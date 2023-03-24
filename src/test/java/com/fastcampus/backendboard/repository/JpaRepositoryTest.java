@@ -1,8 +1,10 @@
 package com.fastcampus.backendboard.repository;
 
 import com.fastcampus.backendboard.domain.Article;
+import com.fastcampus.backendboard.domain.Comment;
 import com.fastcampus.backendboard.domain.Hashtag;
 import com.fastcampus.backendboard.domain.UserAccount;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +137,73 @@ class JpaRepositoryTest {
         assertThat(articlePage.getTotalElements()).isEqualTo(6);
         assertThat(articlePage.getTotalPages()).isEqualTo(2);
     }
+
+
+    @DisplayName("Child comment select Test")
+    @Test
+    void givenParentCommentId_whenSelecting_thenReturnsChildComments() {
+        //Given
+
+        //When
+        Optional<Comment> parentComment = commentRepository.findById(1L);
+
+        //Then
+        assertThat(parentComment).get()
+                .hasFieldOrPropertyWithValue("parentCommentId", null)
+                .extracting("childComments", InstanceOfAssertFactories.COLLECTION)
+                    .hasSize(10);
+    }
+
+    @DisplayName("Child comment select Test")
+    @Test
+    void givenParentComment_whenSaving_thenInsertsChildComment() {
+        //Given
+        Comment parentComment = commentRepository.getReferenceById(1L);
+        Comment childComment = Comment.of(
+                parentComment.getUserAccount(),
+                parentComment.getArticle(),
+                "co-comment"
+        );
+
+        //When
+        parentComment.addChildComment(childComment);
+        commentRepository.flush();
+
+        //Then
+        assertThat(commentRepository.findById(1L)).get()
+                .hasFieldOrPropertyWithValue("parentCommentId", null)
+                .extracting("childComments", InstanceOfAssertFactories.COLLECTION)
+                .hasSize(11);
+    }
+
+    @DisplayName("Child comment delete Test")
+    @Test
+    void givenCommentIdHavingChildComments_whenDeletingParentComment_thenDeletesEveryComments() {
+        //Given
+        Comment parentComment = commentRepository.getReferenceById(1L);
+        long prevArticleCommentCount = commentRepository.count();
+
+        //When
+        commentRepository.delete(parentComment);
+
+        //Then
+        assertThat(commentRepository.count()).isEqualTo(prevArticleCommentCount-11);
+    }
+
+    @DisplayName("Child comment delete Test (cmtId, userId) ")
+    @Test
+    void givenCommentIdHavingChildCommentsAndUserId_whenDeletingParentComment_thenDeletesEveryComments() {
+        //Given
+        long prevArticleCommentCount = commentRepository.count();
+
+        //When
+        commentRepository.deleteByIdAndUserAccount_UserId(1L, "kej");
+
+        //Then
+        assertThat(commentRepository.count()).isEqualTo(prevArticleCommentCount-11);
+    }
+
+
 
     @EnableJpaAuditing
     @TestConfiguration
