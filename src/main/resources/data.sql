@@ -150,7 +150,7 @@ insert into article (title, content, created_at, created_id, modified_at, modifi
 
 
 -- comment(1000)
-insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14, 'Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.', '2022-03-31 19:49:30', 'Kermie', '2022-05-09 23:54:23', 'Randal', 'user7');
+insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14, 'Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.', '2022-03-31 19:49:30', 'Kermie', '2022-05-09 23:54:23', 'Randal', 'kej');
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (39, 'Suspendisse potenti.', '2022-10-11 00:33:50', 'Stanislaw', '2022-04-08 15:47:42', 'Hatti', 'user14');
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (89, 'In hac habitasse platea dictumst.', '2022-09-05 04:24:18', 'Fairlie', '2022-03-24 19:16:45', 'Guenna', 'user5');
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (60, 'Pellentesque ultrices mattis odio.', '2022-07-12 06:19:00', 'Duncan', '2022-10-17 09:22:08', 'Kira', 'user11');
@@ -1150,6 +1150,19 @@ insert into comment (article_id, content, created_at, created_id, modified_at, m
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (23, 'Donec quis orci eget orci vehicula condimentum.', '2022-09-19 23:37:46', 'Staffard', '2022-11-04 00:21:33', 'Filmore', 'user2');
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (54, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio.', '2022-02-16 21:15:36', 'Barret', '2022-10-05 18:40:03', 'Oralla', 'user9');
 insert into comment (article_id, content, created_at, created_id, modified_at, modified_id, user_id) values (36, 'Vivamus vestibulum sagittis sapien.', '2022-10-12 20:36:08', 'Uta', '2022-06-02 14:44:30', 'Ashley', 'user17');
+
+-- child comment(10)
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Donec semper sapien a libero.', '2022-03-23 04:31:43', 'Bev', '2023-01-06 01:17:33', 'Hunter', 'user12');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Pellentesque at nulla.', '2022-04-30 11:02:37', 'Alisander', '2022-05-01 06:29:33', 'Brent', 'user17');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'In eleifend quam a odio.', '2022-11-29 04:59:39', 'Torre', '2023-01-13 05:32:38', 'Batsheva', 'user1');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Nulla tellus.', '2022-11-05 05:32:19', 'Laurene', '2022-09-30 13:18:03', 'Coral', 'user16');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Mauris ullamcorper purus sit amet nulla.', '2022-11-04 00:31:02', 'Gordy', '2022-06-10 10:02:55', 'Clotilda', 'user11');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Curabitur gravida nisi at nibh.', '2022-12-10 07:13:47', 'Ardene', '2022-07-24 08:17:31', 'Tabitha', 'user17');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Etiam pretium iaculis justo.', '2022-04-24 13:51:04', 'Gabriel', '2022-03-23 18:25:07', 'Lesya', 'user19');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Donec quis orci eget orci vehicula condimentum.', '2022-09-19 23:37:46', 'Staffard', '2022-11-04 00:21:33', 'Filmore', 'user2');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio.', '2022-02-16 21:15:36', 'Barret', '2022-10-05 18:40:03', 'Oralla', 'user9');
+insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Vivamus vestibulum sagittis sapien.', '2022-10-12 20:36:08', 'Uta', '2022-06-02 14:44:30', 'Ashley', 'user17');
+
 
 -- hashtag(20)
 insert into hashtag (hashtag_name, created_at, created_id, modified_at, modified_id) values ('Gold', '2023-01-17 13:30:43', 'user6', '2022-05-09 02:07:41', 'user16');
