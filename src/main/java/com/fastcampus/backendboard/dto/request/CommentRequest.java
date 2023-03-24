@@ -5,13 +5,18 @@ import com.fastcampus.backendboard.dto.UserAccountDto;
 
 public record CommentRequest(
         Long articleId,
+        Long parentCommentId,
         String content
 ) {
     public static CommentRequest of (Long articleId, String content) {
-        return new CommentRequest(articleId, content);
+        return CommentRequest.of(articleId, null, content);
+    }
+
+    public static CommentRequest of (Long articleId, Long parentCommentId, String content) {
+        return new CommentRequest(articleId, parentCommentId, content);
     }
 
     public CommentDto toDto(UserAccountDto userAccountDto){
-        return CommentDto.of(articleId, content, userAccountDto);
+        return CommentDto.of(articleId, parentCommentId, content, userAccountDto);
     }
 }

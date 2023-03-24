@@ -4,7 +4,10 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @ToString(callSuper = true)
@@ -23,6 +26,15 @@ public class Comment extends AuditingField{
     @ManyToOne(optional = false)
     private Article article;            //게시글
 
+    @Setter
+    @Column(updatable = false)
+    private Long parentCommentId;
+
+    @ToString.Exclude
+    @OrderBy("createdAt ASC ")
+    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.ALL)
+    private Set<Comment> childComments = new LinkedHashSet<>();
+
     @Setter @Column(nullable = false, length = 500) private String content;             //본문
 
     @Setter
@@ -32,14 +44,20 @@ public class Comment extends AuditingField{
 
     protected Comment() {}
 
-    private Comment(UserAccount userAccount, Article article, String content) {
+    private Comment(UserAccount userAccount, Article article, Long parentCommentId, String content) {
         this.userAccount = userAccount;
         this.article = article;
+        this.parentCommentId=parentCommentId;
         this.content = content;
     }
 
     public static Comment of(UserAccount userAccount, Article article, String content) {
-        return new Comment(userAccount, article, content);
+        return new Comment(userAccount, article, null, content);
+    }
+
+    public void addChildComment(Comment child){
+        child.setParentCommentId(this.getId());
+        this.getChildComments().add(child);
     }
 
     @Override
