@@ -30,15 +30,26 @@
                 <attr sel=".parent-comment" th:each="comment:${comments}">
 
                     <attr sel=".child-comments"
+                          th:fragment="childComments(childComments,parentCommentNickname)"
                           th:if="${!comment.childComments.isEmpty}"
                           th:remove="all-but-first">
-                        <attr sel=".child-comment[0]" th:each="childComment : ${comment.childComments}">
-                            <attr sel=".co-nickname" th:text="${childComment.nickname}"/>
+
+                        <attr sel=".child-comment[0]"
+                              th:each="childComment : ${childComments} ?: ${comment.childComments}">
+                            <attr sel=".co-nickname" th:id="'child-comment-'+${childComment.id}" th:text="${childComment.nickname}"/>
                             <attr sel=".co-created-at/time" th:datetime="${childComment.createdAt}" th:text="${#temporals.format(childComment.createdAt, 'yyyy-MM-dd')}"/>
+                            <attr sel=".co-parent-nickname" th:if="${parentCommentNickname}!=null" th:href="@{'#child-comment-'+${childComment.parentCommentId}}" th:text="'@'+${parentCommentNickname}"/>
                             <attr sel=".co-content" th:text="${childComment.content}"/>
                             <attr sel=".co-del-btn" th:action="@{'/comments/'+${childComment.id}}" th:method="delete"
                                   th:if="${#authorization.expression('isAuthenticated()')} and ${childComment.userId} == ${#authentication.name}"/>
+                            <attr sel=".depth-child-comments"
+                                  th:unless="${childComment.childComments.isEmpty}"
+                                  th:replace=":: childComments(${childComment.childComments},${childComment.nickname})"
+                            />
+
+                            <attr sel=".depth-parent-comment-id" th:name="parentCommentId" th:value="${childComment.id}"/>
                         </attr>
+
                     </attr>
 
                     <attr sel="#co-nickname" th:text="${comment.nickname}"/>
@@ -46,7 +57,6 @@
                     <attr sel="#co-content" th:text="${comment.content}"/>
                     <attr sel="#co-del-btn" th:action="@{'/comments/'+${comment.id}}" th:method="delete"
                           th:if="${#authorization.expression('isAuthenticated()')} and ${comment.userId} == ${#authentication.name}"/>
-
                     <attr sel=".parent-comment-id" th:name="parentCommentId" th:value="${comment.id}"/>
                 </attr>
             </attr>
