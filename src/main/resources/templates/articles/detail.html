@@ -103,20 +103,22 @@
                               <button type="submit" class="btn btn-sm text-sm btn-danger">삭제</button>
                           </form>
                       </div>
+                      <a class="co-parent-nickname media-left">@ Dolore Tincidunt</a>
                       <p class="co-content">Sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
                       <div class="ctl-btn-div">
                         <details class="mb-3 co-comment-textbox">
                           <summary class="btn btn-sm">답글 달기</summary>
                           <form class="comment-form">
                             <input type="hidden" class="article-id"/>
-                            <input type="hidden" class="parent-comment-id"/>
+                            <input type="hidden" class="depth-parent-comment-id"/>
                             <label for="co-comment-textbox-2" hidden></label>
-                            <textarea id="co-comment-textbox-2" class="form-control co-comment-textbox" placeholder="댓글 쓰기.." rows="2" required></textarea>
+                            <textarea id="co-comment-textbox-2" class="form-control comment-textbox" placeholder="댓글 쓰기.." rows="2" required></textarea>
                             <button class="form-control btn btn-primary mt-2 text-sm" type="submit">쓰기</button>
                           </form>
                         </details>
                       </div>
                     </div>
+                    <div class="depth-child-comments"></div>
                   </div>
                 </div>
 
