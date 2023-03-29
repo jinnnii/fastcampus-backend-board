@@ -19,15 +19,15 @@ public class AuditingField {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;        //생성일
+    protected LocalDateTime createdAt;        //생성일
     @CreatedBy
     @Column(nullable = false, updatable = false)
-    private String createdId;               //생성자
+    protected String createdId;               //생성자
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
     @Column(nullable = false)
-    private LocalDateTime modifiedAt;       //수정일
+    protected LocalDateTime modifiedAt;       //수정일
     @LastModifiedBy
     @Column(nullable = false)
-    private String modifiedId;              //수정자
+    protected String modifiedId;              //수정자
 }
