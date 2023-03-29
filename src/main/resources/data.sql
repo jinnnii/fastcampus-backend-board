@@ -1163,18 +1163,6 @@ insert into comment (article_id, parent_comment_id, content, created_at, created
 insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio.', '2022-02-16 21:15:36', 'Barret', '2022-10-05 18:40:03', 'Oralla', 'user9');
 insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1, 'Vivamus vestibulum sagittis sapien.', '2022-10-12 20:36:08', 'Uta', '2022-06-02 14:44:30', 'Ashley', 'user17');
 
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1010, 'comment1', '2022-03-23 04:31:43', 'Bev', '2023-01-06 01:17:33', 'Hunter', 'user12');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1011, 'comment2', '2022-04-30 11:02:37', 'Alisander', '2022-05-01 06:29:33', 'Brent', 'user17');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1012, 'comment3', '2022-11-29 04:59:39', 'Torre', '2023-01-13 05:32:38', 'Batsheva', 'user1');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1013, 'comment4', '2022-11-05 05:32:19', 'Laurene', '2022-09-30 13:18:03', 'Coral', 'user16');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1014, 'comment5', '2022-11-04 00:31:02', 'Gordy', '2022-06-10 10:02:55', 'Clotilda', 'user11');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1009, 'comment6', '2022-12-10 07:13:47', 'Ardene', '2022-07-24 08:17:31', 'Tabitha', 'user17');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1016, 'comment7', '2022-04-24 13:51:04', 'Gabriel', '2022-03-23 18:25:07', 'Lesya', 'user19');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1016, 'comment8', '2022-09-19 23:37:46', 'Staffard', '2022-11-04 00:21:33', 'Filmore', 'user2');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1016, 'comment9', '2022-02-16 21:15:36', 'Barret', '2022-10-05 18:40:03', 'Oralla', 'user9');
-insert into comment (article_id, parent_comment_id, content, created_at, created_id, modified_at, modified_id, user_id) values (14,1016, 'comment10', '2022-10-12 20:36:08', 'Uta', '2022-06-02 14:44:30', 'Ashley', 'user17');
-
-
 -- hashtag(20)
 insert into hashtag (hashtag_name, created_at, created_id, modified_at, modified_id) values ('Gold', '2023-01-17 13:30:43', 'user6', '2022-05-09 02:07:41', 'user16');
 insert into hashtag (hashtag_name, created_at, created_id, modified_at, modified_id) values ('Black', '2022-08-09 03:14:16', 'user1', '2022-08-01 11:26:33', 'user1');
