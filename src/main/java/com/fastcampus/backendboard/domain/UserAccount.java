@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "email", unique = true),
         @Index(columnList = "createdId"),
@@ -26,16 +26,22 @@ public class UserAccount extends AuditingField {
 
 
     protected UserAccount(){}
-    private UserAccount(String userId, String userPw, String email, String nickname, String memo) {
+    private UserAccount(String userId, String userPw, String email, String nickname, String memo, String createdId) {
         this.userId = userId;
         this.userPw = userPw;
         this.email = email;
         this.nickname = nickname;
         this.memo = memo;
+        this.createdId = createdId;
+        this.modifiedId = createdId;
     }
 
     public static UserAccount of(String userId, String userPw, String email, String nickname, String memo){
-        return new UserAccount(userId, userPw, email, nickname, memo);
+        return UserAccount.of(userId, userPw, email, nickname, memo, null);
+    }
+
+    public static UserAccount of(String userId, String userPw, String email, String nickname, String memo, String createdId){
+        return new UserAccount(userId, userPw, email, nickname, memo, createdId);
     }
 
     @Override
