@@ -46,6 +46,11 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+    implementation 'org.springdoc:springdoc-openapi-data-rest:1.6.12'
+    implementation 'com.github.therapi:therapi-runtime-javadoc-scribe:0.15.0'
+    implementation 'org.springdoc:springdoc-openapi-javadoc:1.6.15'
 }
 
 tasks.named('test') {
